@@ -22,49 +22,30 @@ class LLM:
 
         self.model.eval()
 
-        # 급한 사람: 빠르게 답하지만 정확도 떨어짐
-        self.system_prompt_fast = (
-            "당신은 빠르고 직관적인 숫자 비교 게임의 전문가입니다.\n\n"
-            "성격: 급하고 즉석에서 판단하는 스타일. 빠르게 답하는 것을 좋아함.\n\n"
+        prompt_template = ("당신은 숫자 비교 게임의 전문가입니다.\n\n"
+            "성격: {}\n\n"
             "규칙: 두 숫자 문자열의 각 자리를 비교하여 다른 위치의 인덱스(0부터 시작)를 찾으세요.\n\n"
+            "답변 규칙: 정답은 반드시 * ... *로 감싸세요.\n\n"
             "답변 형식:\n"
             "1. 0 != 1(다름)\n"
             "2. 2 == 2(일치)\n"
-            "3. 3 != 0(다름)\n"
-            "답: 0, 2\n\n"
+            "3. 3 != 0(다름)\n\n"
+            "*0, 2*\n\n"
             "예시:\n"
             "Q: 12345 54321\n"
             "1. 1 != 5(다름)\n"
             "2. 2 != 4(다름)\n"
             "3. 3 == 3(일치)\n"
             "4. 4 != 2(다름)\n"
-            "5. 5 != 1(다름)\n"
-            "답: 0, 1, 3, 4\n\n"
-            "빠르게 답하세요!"
-        )
+            "5. 5 != 1(다름)\n\n"
+            "*0, 1, 3, 4*\n\n"
+            "{}")
 
-        # 신중한 사람: 꼼꼼하지만 시간이 오래 걸림
-        self.system_prompt_careful = (
-            "당신은 신중하고 분석적인 숫자 비교 게임의 전문가입니다.\n\n"
-            "성격: 차근차근 분석하고 정확성을 중시하는 스타일. 실수를 싫어함.\n\n"
-            "규칙: 두 숫자 문자열의 각 자리를 비교하여 다른 위치의 인덱스(0부터 시작)를 찾으세요.\n\n"
-            "답변 형식:\n"
-            "1. 0 != 1(다름)\n"
-            "2. 2 == 2(일치)\n"
-            "3. 3 != 0(다름)\n"
-            "답: 0, 2\n\n"
-            "예시:\n"
-            "Q: 12345 54321\n"
-            "1. 1 != 5(다름)\n"
-            "2. 2 != 4(다름)\n"
-            "3. 3 == 3(일치)\n"
-            "4. 4 != 2(다름)\n"
-            "5. 5 != 1(다름)\n"
-            "답: 0, 1, 3, 4\n\n"
-            "신중하게 검토해서 정확히 답하세요."
-        )
+        # 급한
+        personality_fast = "급하고 즉석에서 판단하는 스타일. 빠르게 답하는 것을 좋아함."
+        end_of_prompt_fast = "빠르게 답하세요!"
+        self.system_prompt_fast = prompt_template.format(personality_fast, end_of_prompt_fast)
 
-        # 급한 사람 설정: 빠르게
         self.generation_config_fast = {
             "max_new_tokens": 80,
             "do_sample": True,
@@ -74,9 +55,13 @@ class LLM:
             "eos_token_id": self.tokenizer.eos_token_id,
         }
 
-        # 신중한 사람 설정: 정확하게 하지만 느림
+        # 신중
+        personality_careful = "차근차근 분석하고 정확성을 중시하는 스타일. 실수를 싫어함."
+        end_of_prompt_careful = "신중하게 검토해서 정확히 답하세요."
+        self.system_prompt_careful = prompt_template.format(personality_careful, end_of_prompt_careful)
+
         self.generation_config_careful = {
-            "max_new_tokens": 150,
+            "max_new_tokens": 80,
             "do_sample": True,
             "top_p": 0.9,
             "temperature": 0.3,
@@ -88,8 +73,7 @@ class LLM:
     def get_answer(self, num1: int, num2: int, timeout_sec: int = 5):
         user_input = f"{num1} {num2}"
         results = {"fast": None, "careful": None}
-
-        # 급한 답변자 스레드
+        
         fast_thread = threading.Thread(target=self._run_fast, args=(user_input, results))
         careful_thread = threading.Thread(target=self._run_careful, args=(user_input, results))
 
@@ -97,7 +81,7 @@ class LLM:
         careful_thread.start()
 
         fast_thread.join(timeout=timeout_sec)
-        careful_thread.join(timeout=timeout_sec * 0.7)
+        careful_thread.join(timeout=timeout_sec)
 
         if fast_thread.is_alive():
             results["fast"] = f"⏰시간 초과!"
