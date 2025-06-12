@@ -1,0 +1,26 @@
+/* src/components/Header.css */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background-color: #fff;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075); /* shadow-sm 대체 */
+}
+
+.app-header .logo {
+    font-family: 'Bagel Fat One', cursive;
+    font-size: 2.5em;
+    color: #402718;
+}
+
+.app-header .nav-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 1.1em;
+    transition: color 0.3s ease;
+}
+
+.app-header .nav-link:hover {
+    color: #0056b3;
+}

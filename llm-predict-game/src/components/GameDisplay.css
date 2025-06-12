@@ -1,0 +1,79 @@
+/* src/components/GameDisplay.css */
+
+.game-display-area {
+    margin-bottom: 2rem;
+}
+
+.model_box {
+    flex: 1;
+    min-width: 200px;
+    background-color: #F2E9BD;
+    border: 1px solid #402718;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.model_box h3 {
+    color: #402718;
+    margin-bottom: 10px;
+}
+
+.model_box p {
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.VS_box {
+    flex-shrink: 0;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.VS_font {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #dc3545;
+    margin: 10px 0;
+}
+
+/* 숫자 퀴즈 보드 섹션 스타일 */
+.number-quiz-board-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #e2e6ea;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.number-quiz-board-container h4 {
+    color: #343a40;
+    margin-bottom: 15px;
+}
+
+.number-boxes-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.number-box {
+    width: 50px;
+    height: 50px;
+    background-color: #293C73;
+    border: 1px solid #0056b3;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.8rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
